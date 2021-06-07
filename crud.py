@@ -63,19 +63,6 @@ def create_rating(score, user, movie):
 
     return rating    
 
-def password_match(email):
-
-    user = User.query.filter(User.email == email).first()
-    password = user.password
-
-    return password
-
-def get_user_id(email):
-    
-    user = User.query.filter(User.email == email).first()       
-    user_id = user.user_id
-
-    return user_id
 
 if __name__ == '__main__':
     from server import app

@@ -72,23 +72,45 @@ def register_user():
 
 
 @app.route('/login', methods = ["POST"])
-def user_login():
+def process_login():
 
     email = request.form.get('email')
     password = request.form.get('password')
 
-    user_password = crud.password_match(email)
+    user = crud.get_user_by_email(email)
 
-    if user_password == password:
-        user_id = crud.get_user_id(email)
-        session['user_id'] = user_id
-        flash('You have succesffully logged in.')
-
+    if user.password == password:
+        
+        session['user'] = user.email
+        flash(f'You have succesffully logged in {user.email}')
         return redirect('/movies')
 
     else: 
-        flash('Please try again!') 
+        flash('The email or password you entered was incorrect.') 
         return redirect('/')     
+
+
+@app.route('/movies/<movie_id>/ratings', methods=['POST'])
+def process_rating(movie_id):
+
+    logged_in_email = session.get('user')
+    rating = request.form.get('rating')
+
+    if logged_in_email is None:
+        flash("You must log in to rate a movie.")
+
+    elif not rating:
+        flash('You have not yet rated the movie.')
+
+    else:
+        user = crud.get_user_by_email(logged_in_email)
+        movie = crud.get_movie_by_id(movie_id)    
+    
+
+        crud.create_rating(int(rating), user, movie)
+        flash(f'You rated the movie {rating} out of 5')
+
+    return redirect(f'/movies/{movie_id}')
 
 if __name__ == '__main__':
     connect_to_db(app)

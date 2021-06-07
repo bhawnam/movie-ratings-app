@@ -9,5 +9,18 @@
   {{ movie.overview }}
 </p>
 
-<img src="{{ movie.poster_path }}">
+<!-- <img src="{{ movie.poster_path }}"> -->
+{% if session.get('user') %}
+  Rate the movie 
+  <form action = "/movies/{{movie.movie_id}}/ratings" method ="POST">
+    
+    <select name= "rating">
+      <option value="">Select rating </option>
+      {% for num in range(1,6) %}
+      <option value = "{{num}}"> {{num}} </option>
+      {% endfor %}
+      </select>
+      <input type="submit">
+  </form>
+  {% endif %}
 {% endblock %}
